@@ -2,6 +2,8 @@
 
 Aplikasi manajemen stok barang berbasis web yang ringan, modern, dan mudah digunakan. Aplikasi ini dibangun menggunakan PHP Native dan JSON sebagai penyimpanan data.
 
+---
+
 ✨ Fitur Utama
 
  - CRUD Lengkap: Tambah, Baca, Edit, dan Hapus data barang dengan mudah.
@@ -16,6 +18,8 @@ Aplikasi manajemen stok barang berbasis web yang ringan, modern, dan mudah digun
 
  - UI Modern & Responsif: Desain bersih menggunakan CSS murni (Flexbox & Grid), ikon FontAwesome, dan font Google Inter. Aman dibuka di HP maupun Desktop.
 
+---
+
 🚀 Cara Menjalankan
 
  1. Pastikan Anda memiliki Web Server lokal (seperti XAMPP, Laragon, atau PHP Built-in Server).
@@ -27,6 +31,8 @@ Aplikasi manajemen stok barang berbasis web yang ringan, modern, dan mudah digun
  4. Buka browser dan akses http://localhost/nama-folder-project.
 
  5. Selesai! File data.json akan dibuat otomatis saat aplikasi pertama kali dijalankan.
+
+---
 
 🛠️ Teknologi yang Digunakan
 
@@ -40,5 +46,8 @@ Aplikasi manajemen stok barang berbasis web yang ringan, modern, dan mudah digun
 
  - Font: Inter (Google Fonts)
 
+---
+
 📸 Preview
-Screenshot 2025-11-25 092550.png
+
+![Preview](Screenshot 2025-11-25 092550.png)
