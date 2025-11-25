@@ -48,9 +48,10 @@ Aplikasi manajemen stok barang berbasis web yang ringan, modern, dan mudah digun
 
 ---
 
-📸 Preview
+📸 Preview Web
 
 ![Preview](https://github.com/ahnaffaii/TA_PROGDAS_Ahnaf-Nuruddin-Rifai_21120125140177_Stock-Manager/blob/a3e39a9b6c0b627a4b566d3245f5b33a4f33aad5/Preview.png)
+
 
 
 
