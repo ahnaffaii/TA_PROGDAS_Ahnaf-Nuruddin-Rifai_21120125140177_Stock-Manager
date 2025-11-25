@@ -1,0 +1,92 @@
+[
+    {
+        "id": 1764033608,
+        "nama": "Lenovo LOQ Intel i7 13650HX 32GB DDR5 1TB SSD RTX4050-6GB Full HD IPS 144Hz 100%sRGB ",
+        "stok": 20,
+        "harga": 14800000
+    },
+    {
+        "id": 1764033878,
+        "nama": "LENOVO LEGION 5I OLED I7 14700HX RTX5060 8GB\/ 24GB 512GB 15.1 WQXGA 165HZ  -43ID",
+        "stok": 20,
+        "harga": 28000000
+    },
+    {
+        "id": 1764034570,
+        "nama": "ASUS TUF A16 FA608PP RYZEN 9 8940HX RTX5070 8GB\/ 16GB 1TB 16.0 WQXGA 16HZ 100SRGB ",
+        "stok": 15,
+        "harga": 36000000
+    },
+    {
+        "id": 1764034760,
+        "nama": "HP Omen Max 16 GeForce RTX5070Ti 12GB \u2013 AMD Ryzen AI 7 350 RAM 32GB SSD 1TB 16inch WQXGA (2560 x 1600), 60-240 Hz 100% sRGB",
+        "stok": 10,
+        "harga": 40000000
+    },
+    {
+        "id": 1764034824,
+        "nama": "Gigabyte GeForce RTX 5080 WINDFORCE OC SFF 16G - 16GB GDDR7",
+        "stok": 20,
+        "harga": 20000000
+    },
+    {
+        "id": 1764034902,
+        "nama": "MSI GeForce RTX 5060 Ti GAMING TRIO OC WHITE | 8GB GDDR7",
+        "stok": 25,
+        "harga": 8600000
+    },
+    {
+        "id": 1764035080,
+        "nama": "ASRock B850M-X R2.0 (AM5, AMD B850, DDR5, USB3.2 Type-C, SATA3)",
+        "stok": 18,
+        "harga": 2070000
+    },
+    {
+        "id": 1764035172,
+        "nama": "Corsair Vengeance Black DDR5 PC44800 5600MHz 16GB (1x16GB)",
+        "stok": 23,
+        "harga": 2800000
+    },
+    {
+        "id": 1764035345,
+        "nama": "ADATA DDR4 XPG GAMMIX D35 WHITE VERSION PC25600 3200MHz 16GB (2X8GB)",
+        "stok": 31,
+        "harga": 1500000
+    },
+    {
+        "id": 1764035404,
+        "nama": "ADATA SSD XPG NVME GEN5 MARS 980 BLADE PCIe 5.0 M.2 2280 1TB",
+        "stok": 12,
+        "harga": 2200000
+    },
+    {
+        "id": 1764035493,
+        "nama": "Monitor Samsung LED OLED Odyssey G5 S27FG502 - QHD 27&quot; Inch 185Hz",
+        "stok": 11,
+        "harga": 7000000
+    },
+    {
+        "id": 1764035551,
+        "nama": "Intel Core i5-14600K 3.5GHz Up To 5.3GHz - [Box] LGA 1700",
+        "stok": 10,
+        "harga": 4100000
+    },
+    {
+        "id": 1764035726,
+        "nama": "AMD Ryzen 7 7800X3D 4.2GHz Up To 5.0GHz Cache 96MB 120W AM5 [Tray]",
+        "stok": 26,
+        "harga": 5600000
+    },
+    {
+        "id": 1764035829,
+        "nama": "Logitech G PRO X SUPERLIGHT 2 Mouse Gaming Wireless",
+        "stok": 16,
+        "harga": 2200000
+    },
+    {
+        "id": 1764035956,
+        "nama": "MACBOOK AIR 13 M4 10C GPU 16GB 512GB 10C CPU",
+        "stok": 8,
+        "harga": 19500000
+    }
+]
