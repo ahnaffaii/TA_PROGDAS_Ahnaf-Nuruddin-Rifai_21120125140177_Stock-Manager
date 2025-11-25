@@ -22,7 +22,7 @@ Aplikasi manajemen stok barang berbasis web yang ringan, modern, dan mudah digun
 
 🚀 Cara Menjalankan
 
- 1. Pastikan Anda memiliki Web Server lokal (seperti XAMPP, Laragon, atau PHP Built-in Server).
+ 1. Pastikan memiliki Web Server lokal (seperti XAMPP, Laragon, atau PHP Built-in Server).
 
  2. Clone repository ini atau download ZIP.
 
@@ -40,7 +40,7 @@ Aplikasi manajemen stok barang berbasis web yang ringan, modern, dan mudah digun
 
  - Database: JSON File
 
- - Frontend: HTML5, CSS3 (Custom Modern Style)
+ - Frontend: HTML, CSS 
 
  - Icons: FontAwesome 6
 
@@ -51,5 +51,6 @@ Aplikasi manajemen stok barang berbasis web yang ringan, modern, dan mudah digun
 📸 Preview
 
 ![Preview](https://github.com/ahnaffaii/TA_PROGDAS_Ahnaf-Nuruddin-Rifai_21120125140177_Stock-Manager/blob/a3e39a9b6c0b627a4b566d3245f5b33a4f33aad5/Preview.png)
+
 
 
