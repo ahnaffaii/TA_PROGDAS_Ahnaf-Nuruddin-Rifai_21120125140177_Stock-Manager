@@ -28,7 +28,7 @@ Aplikasi manajemen stok barang berbasis web yang ringan, modern, dan mudah digun
 
  3. Simpan folder project di dalam htdocs (jika menggunakan XAMPP).
 
- 4. Buka browser dan akses http://localhost/nama-folder-project.
+ 4. Buka browser dan akses "http://localhost/nama-folder-project".
 
  5. Selesai! File data.json akan dibuat otomatis saat aplikasi pertama kali dijalankan.
 
@@ -51,6 +51,7 @@ Aplikasi manajemen stok barang berbasis web yang ringan, modern, dan mudah digun
 📸 Preview
 
 ![Preview](https://github.com/ahnaffaii/TA_PROGDAS_Ahnaf-Nuruddin-Rifai_21120125140177_Stock-Manager/blob/a3e39a9b6c0b627a4b566d3245f5b33a4f33aad5/Preview.png)
+
 
 
 
