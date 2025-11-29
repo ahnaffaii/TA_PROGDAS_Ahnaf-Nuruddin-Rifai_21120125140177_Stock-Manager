@@ -142,9 +142,10 @@ $totalItem = count($dataBarang);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stock Manager OOP</title>
+    <title>Stock Manager</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
         /* CSS STYLING */
         :root {
@@ -331,52 +332,74 @@ $totalItem = count($dataBarang);
         </div>
     </nav>
 
+    <!-- BRAND SLIDER -->
     <div class="slider-area">
         <div class="slider-track">
+            <!-- Group 1 -->
             <div class="brand-box"><i class="fab fa-apple"></i> Apple</div>
             <div class="brand-box"><i class="fab fa-microsoft"></i> Microsoft</div>
             <div class="brand-box"><i class="fas fa-laptop"></i> Asus</div>
             <div class="brand-box"><i class="fas fa-laptop"></i> Lenovo</div>
-            <div class="brand-box"><i class="fas fa-laptop"></i> HP</div>
+            <div class="brand-box"><i class="fas fa-laptop"></i> Hp</div>
+            <div class="brand-box"><i class="fas fa-microchip"></i> Nvidia</div>
+            <div class="brand-box"><i class="fas fa-microchip"></i> AMD</div>
             <div class="brand-box"><i class="fas fa-microchip"></i> Intel</div>
             <div class="brand-box"><i class="fas fa-laptop"></i> Acer</div>
             <div class="brand-box"><i class="fas fa-desktop"></i> Samsung</div>
+            <div class="brand-box"><i class="fas fa-memory"></i> Corsair</div>
+            <div class="brand-box"><i class="fas fa-memory"></i> Adata XPG</div>
+            <div class="brand-box"><i class="fas fa-microchip"></i> Gigabyte</div>
+            <div class="brand-box"><i class="fas fa-microchip"></i> AsRock</div>
             <div class="brand-box"><i class="fas fa-mouse"></i> Logitech</div>
             <div class="brand-box"><i class="fas fa-laptop"></i> MSI</div>
-
+            <!-- Group 2  -->
             <div class="brand-box"><i class="fab fa-apple"></i> Apple</div>
             <div class="brand-box"><i class="fab fa-microsoft"></i> Microsoft</div>
             <div class="brand-box"><i class="fas fa-laptop"></i> Asus</div>
             <div class="brand-box"><i class="fas fa-laptop"></i> Lenovo</div>
-             <div class="brand-box"><i class="fas fa-laptop"></i> HP</div>
+            <div class="brand-box"><i class="fas fa-laptop"></i> Hp</div>
+            <div class="brand-box"><i class="fas fa-microchip"></i> Nvidia</div>
+            <div class="brand-box"><i class="fas fa-microchip"></i> AMD</div>
             <div class="brand-box"><i class="fas fa-microchip"></i> Intel</div>
             <div class="brand-box"><i class="fas fa-laptop"></i> Acer</div>
             <div class="brand-box"><i class="fas fa-desktop"></i> Samsung</div>
+            <div class="brand-box"><i class="fas fa-memory"></i> Corsair</div>
+            <div class="brand-box"><i class="fas fa-memory"></i> Adata XPG</div>
+            <div class="brand-box"><i class="fas fa-microchip"></i> Gigabyte</div>
+            <div class="brand-box"><i class="fas fa-microchip"></i> AsRock</div>
             <div class="brand-box"><i class="fas fa-mouse"></i> Logitech</div>
             <div class="brand-box"><i class="fas fa-laptop"></i> MSI</div>
         </div>
     </div>
 
     <div class="container">
+        
+        <!-- HEADER GRID -->
         <div class="stats-grid">
+            
+            <!-- Total Barang -->
             <div class="stat-card">
-                <div class="stat-icon"><i class="fas fa-box"></i></div>
+                <div class="stat-icon icon-blue"><i class="fas fa-box"></i></div>
                 <div class="stat-info">
                     <h3>Total Barang</h3>
                     <p><?= $totalItem ?></p>
                 </div>
             </div>
 
+            <!--Search Bar-->
             <form action="" method="GET" class="search-box-header">
-                <input type="text" name="q" class="search-input-header" placeholder="Cari barang..." value="<?= htmlspecialchars($searchKeyword) ?>">
+                <input type="text" name="q" class="search-input-header" placeholder="Cari nama barang..." value="<?= isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '' ?>">
                 <button type="submit" class="btn btn-search"><i class="fas fa-search"></i></button>
-                <?php if($searchKeyword): ?>
-                    <a href="index.php" class="btn-reset"><i class="fas fa-times"></i></a>
+                <?php if(isset($_GET['q'])): ?>
+                    <a href="index.php" class="btn-reset" title="Reset Pencarian"><i class="fas fa-times"></i></a>
                 <?php endif; ?>
             </form>
+
         </div>
 
         <div class="content-grid">
+            
+            <!-- FORM INPUT -->
             <div class="left-panel">
                 <div class="card">
                     <div class="card-header">
@@ -388,39 +411,41 @@ $totalItem = count($dataBarang);
                             
                             <div class="form-group">
                                 <label class="form-label">Nama Barang</label>
-                                <input type="text" name="nama" class="form-input" value="<?= $editData['nama'] ?>" required>
+                                <input type="text" name="nama" class="form-input" value="<?= $editData['nama'] ?>" placeholder="Contoh: Laptop Asus" required>
                             </div>
 
                             <div class="form-group">
                                 <label class="form-label">Stok</label>
-                                <input type="number" name="stok" class="form-input" value="<?= $editData['stok'] ?>" required>
+                                <input type="number" name="stok" class="form-input" value="<?= $editData['stok'] ?>" placeholder="0" required>
                             </div>
 
                             <div class="form-group">
-                                <label class="form-label">Harga (Rp)</label>
-                                <input type="number" name="harga" class="form-input" value="<?= $editData['harga'] ?>" required>
+                                <label class="form-label">Harga Satuan (Rp)</label>
+                                <input type="number" name="harga" class="form-input" value="<?= $editData['harga'] ?>" placeholder="0" required>
                             </div>
 
                             <button type="submit" class="btn btn-primary">
-                                <?= $editMode ? 'Simpan' : 'Tambah' ?>
+                                <?= $editMode ? 'Simpan Perubahan' : 'Tambah Barang' ?>
                             </button>
 
                             <?php if ($editMode): ?>
-                                <a href="index.php" class="btn btn-secondary">Batal</a>
+                                <a href="index.php" class="btn btn-secondary">Cancel</a>
                             <?php endif; ?>
                         </form>
                     </div>
                 </div>
             </div>
 
+            <!-- TABEL DATA -->
             <div class="right-panel">
                 <div class="card">
                     <div class="card-body">
+                        
                         <div style="overflow-x: auto;">
                             <table>
                                 <thead>
                                     <tr>
-                                        <th>Nama</th>
+                                        <th>Nama Barang</th>
                                         <th>Stok</th>
                                         <th>Harga</th>
                                         <th style="text-align:right;">Aksi</th>
@@ -428,22 +453,31 @@ $totalItem = count($dataBarang);
                                 </thead>
                                 <tbody>
                                     <?php if (empty($dataBarang)): ?>
-                                        <tr><td colspan="4" style="text-align:center; padding: 30px;">Data Kosong.</td></tr>
+                                        <tr>
+                                            <td colspan="4" style="text-align:center; padding: 30px; color: #9CA3AF;">
+                                                <i class="fas fa-box-open" style="font-size: 2rem; margin-bottom: 10px;"></i><br>
+                                                Barang Habis.
+                                            </td>
+                                        </tr>
                                     <?php else: ?>
                                         <?php foreach ($dataBarang as $row): ?>
                                         <tr>
-                                            <td><?= $row['nama'] ?></td>
+                                            <td style="font-weight: 600; color: var(--text-dark);">
+                                                <?= $row['nama'] ?>
+                                            </td>
                                             <td>
                                                 <?php if($row['stok'] < 5): ?>
-                                                    <span class="badge bg-warn"><?= $row['stok'] ?></span>
+                                                    <span class="badge bg-warn"><?= $row['stok'] ?> (Stok Tipis)</span>
                                                 <?php else: ?>
-                                                    <span class="badge bg-ok"><?= $row['stok'] ?></span>
+                                                    <span class="badge bg-ok"><?= $row['stok'] ?> Pcs</span>
                                                 <?php endif; ?>
                                             </td>
-                                            <td>Rp <?= number_format($row['harga'], 0, ',', '.') ?></td>
-                                            <td style="text-align:right;" class="action-links">
-                                                <a href="?op=edit&id=<?= $row['id'] ?>" class="edit-link"><i class="fas fa-pen"></i></a>
-                                                <a href="?op=delete&id=<?= $row['id'] ?>" class="delete-link" onclick="return confirm('Hapus?')"><i class="fas fa-trash"></i></a>
+                                            <td>
+                                                Rp <?= number_format($row['harga'], 0, ',', '.') ?>
+                                            </td>
+                                            <td class="action-links" style="text-align:right;">
+                                                <a href="?op=edit&id=<?= $row['id'] ?>" class="edit-link" title="Edit"><i class="fas fa-pen"></i></a>
+                                                <a href="?op=delete&id=<?= $row['id'] ?>" class="delete-link" onclick="return confirm('Hapus barang ini?')" title="Hapus"><i class="fas fa-trash"></i></a>
                                             </td>
                                         </tr>
                                         <?php endforeach; ?>
@@ -454,7 +488,9 @@ $totalItem = count($dataBarang);
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
+
 </body>
 </html>
