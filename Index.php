@@ -1,37 +1,50 @@
 <?php
-$file_db = 'data.json';
-// Inisialisasi Database JSON
-if (!file_exists($file_db)) {
-    file_put_contents($file_db, json_encode([]));
-}
+class StockManager {
+    private $filePath;
+    private $data = [];
 
-function getData() {
-    global $file_db;
-    $json = file_get_contents($file_db);
-    return json_decode($json, true) ?? [];
-}
+    public function __construct($filePath) {
+        $this->filePath = $filePath;
+        $this->initDB();
+        $this->loadData();
+    }
 
-function saveData($data) {
-    global $file_db;
-    file_put_contents($file_db, json_encode(array_values($data), JSON_PRETTY_PRINT));
-}
+    // Menginisialisasi file jika belum ada
+    private function initDB() {
+        if (!file_exists($this->filePath)) {
+            file_put_contents($this->filePath, json_encode([]));
+        }
+    }
 
-// Variabel Kontrol
-$dataBarang = getData();
-$editMode = false;
-$editData = ['id' => '', 'nama' => '', 'stok' => '', 'harga' => ''];
-$searchKeyword = '';
+    // Membaca data dari JSON ke properti class
+    private function loadData() {
+        $json = file_get_contents($this->filePath);
+        $this->data = json_decode($json, true) ?? [];
+    }
 
-// --- LOGIKA FORM (POST) ---
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $nama = htmlspecialchars($_POST['nama']);
-    $stok = intval($_POST['stok']);
-    $harga = intval($_POST['harga']);
-    $id = $_POST['id'];
+    // Menyimpan data dari properti class ke JSON
+    private function saveData() {
+        file_put_contents($this->filePath, json_encode(array_values($this->data), JSON_PRETTY_PRINT));
+    }
 
-    if ($id) {
-        // UPDATE
-        foreach ($dataBarang as &$item) {
+    // --- CRUD METHODS ---
+    public function getAll() {
+        return $this->data;
+    }
+
+    public function addItem($nama, $stok, $harga) {
+        $newItem = [
+            'id' => time(),
+            'nama' => $nama,
+            'stok' => $stok,
+            'harga' => $harga
+        ];
+        $this->data[] = $newItem;
+        $this->saveData();
+    }
+
+    public function updateItem($id, $nama, $stok, $harga) {
+        foreach ($this->data as &$item) {
             if ($item['id'] == $id) {
                 $item['nama'] = $nama;
                 $item['stok'] = $stok;
@@ -39,56 +52,88 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 break;
             }
         }
-    } else {
-        // CREATE
-        $dataBarang[] = [
-            'id' => time(), 
-            'nama' => $nama,
-            'stok' => $stok,
-            'harga' => $harga
-        ];
+        $this->saveData();
     }
-    saveData($dataBarang);
+
+    public function deleteItem($id) {
+        $this->data = array_filter($this->data, function($item) use ($id) {
+            return $item['id'] != $id;
+        });
+        $this->saveData();
+    }
+
+    public function getItemById($id) {
+        foreach ($this->data as $item) {
+            if ($item['id'] == $id) {
+                return $item;
+            }
+        }
+        return null;
+    }
+
+    public function searchItems($keyword) {
+        if (empty($keyword)) return $this->data;
+        
+        return array_filter($this->data, function($item) use ($keyword) {
+            return strpos(strtolower($item['nama']), strtolower($keyword)) !== false;
+        });
+    }
+}
+
+// --- INISIALISASI OBJEK ---
+$manager = new StockManager('data.json');
+
+// Variabel untuk View
+$editMode = false;
+$editData = ['id' => '', 'nama' => '', 'stok' => '', 'harga' => ''];
+$searchKeyword = '';
+
+// --- CONTROLLER LOGIC ---
+// 1. Handle POST (Create / Update)
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $nama = htmlspecialchars($_POST['nama']);
+    $stok = intval($_POST['stok']);
+    $harga = intval($_POST['harga']);
+    $id = $_POST['id'];
+
+    if ($id) {
+        $manager->updateItem($id, $nama, $stok, $harga);
+    } else {
+        $manager->addItem($nama, $stok, $harga);
+    }
+    
     header("Location: index.php");
     exit();
 }
 
-// --- LOGIKA AKSI (GET: Delete, Edit, Search) ---
+// 2. Handle GET Actions (Delete / Edit / Search)
 if (isset($_GET['op'])) {
     $op = $_GET['op'];
     $id = $_GET['id'] ?? null;
 
     if ($op == 'delete' && $id) {
-        $dataBarang = array_filter($dataBarang, function($item) use ($id) {
-            return $item['id'] != $id;
-        });
-        saveData($dataBarang);
+        $manager->deleteItem($id);
         header("Location: index.php");
         exit();
     }
     
     if ($op == 'edit' && $id) {
-        $editMode = true;
-        foreach ($dataBarang as $item) {
-            if ($item['id'] == $id) {
-                $editData = $item;
-                break;
-            }
+        $foundItem = $manager->getItemById($id);
+        if ($foundItem) {
+            $editMode = true;
+            $editData = $foundItem;
         }
     }
 }
 
-// --- LOGIKA SEARCH ---
+// 3. Prepare Data for View
 if (isset($_GET['q'])) {
-    $searchKeyword = strtolower($_GET['q']);
-    if ($searchKeyword != '') {
-        $dataBarang = array_filter($dataBarang, function($item) use ($searchKeyword) {
-            return strpos(strtolower($item['nama']), $searchKeyword) !== false;
-        });
-    }
+    $searchKeyword = $_GET['q'];
+    $dataBarang = $manager->searchItems($searchKeyword);
+} else {
+    $dataBarang = $manager->getAll();
 }
 
-// --- HITUNG STATISTIK (Total Barang) ---
 $totalItem = count($dataBarang);
 ?>
 
@@ -97,10 +142,9 @@ $totalItem = count($dataBarang);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stock Manager</title>
+    <title>Stock Manager OOP</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
     <style>
         /* CSS STYLING */
         :root {
@@ -287,74 +331,52 @@ $totalItem = count($dataBarang);
         </div>
     </nav>
 
-    <!-- BRAND SLIDER -->
     <div class="slider-area">
         <div class="slider-track">
-            <!-- Group 1 -->
             <div class="brand-box"><i class="fab fa-apple"></i> Apple</div>
             <div class="brand-box"><i class="fab fa-microsoft"></i> Microsoft</div>
             <div class="brand-box"><i class="fas fa-laptop"></i> Asus</div>
             <div class="brand-box"><i class="fas fa-laptop"></i> Lenovo</div>
-            <div class="brand-box"><i class="fas fa-laptop"></i> Hp</div>
-            <div class="brand-box"><i class="fas fa-microchip"></i> Nvidia</div>
-            <div class="brand-box"><i class="fas fa-microchip"></i> AMD</div>
+            <div class="brand-box"><i class="fas fa-laptop"></i> HP</div>
             <div class="brand-box"><i class="fas fa-microchip"></i> Intel</div>
             <div class="brand-box"><i class="fas fa-laptop"></i> Acer</div>
             <div class="brand-box"><i class="fas fa-desktop"></i> Samsung</div>
-            <div class="brand-box"><i class="fas fa-memory"></i> Corsair</div>
-            <div class="brand-box"><i class="fas fa-memory"></i> Adata XPG</div>
-            <div class="brand-box"><i class="fas fa-microchip"></i> Gigabyte</div>
-            <div class="brand-box"><i class="fas fa-microchip"></i> AsRock</div>
             <div class="brand-box"><i class="fas fa-mouse"></i> Logitech</div>
             <div class="brand-box"><i class="fas fa-laptop"></i> MSI</div>
-            <!-- Group 2  -->
+
             <div class="brand-box"><i class="fab fa-apple"></i> Apple</div>
             <div class="brand-box"><i class="fab fa-microsoft"></i> Microsoft</div>
             <div class="brand-box"><i class="fas fa-laptop"></i> Asus</div>
             <div class="brand-box"><i class="fas fa-laptop"></i> Lenovo</div>
-            <div class="brand-box"><i class="fas fa-laptop"></i> Hp</div>
-            <div class="brand-box"><i class="fas fa-microchip"></i> Nvidia</div>
-            <div class="brand-box"><i class="fas fa-microchip"></i> AMD</div>
+             <div class="brand-box"><i class="fas fa-laptop"></i> HP</div>
             <div class="brand-box"><i class="fas fa-microchip"></i> Intel</div>
             <div class="brand-box"><i class="fas fa-laptop"></i> Acer</div>
             <div class="brand-box"><i class="fas fa-desktop"></i> Samsung</div>
-            <div class="brand-box"><i class="fas fa-memory"></i> Corsair</div>
-            <div class="brand-box"><i class="fas fa-memory"></i> Adata XPG</div>
-            <div class="brand-box"><i class="fas fa-microchip"></i> Gigabyte</div>
-            <div class="brand-box"><i class="fas fa-microchip"></i> AsRock</div>
             <div class="brand-box"><i class="fas fa-mouse"></i> Logitech</div>
             <div class="brand-box"><i class="fas fa-laptop"></i> MSI</div>
         </div>
     </div>
 
     <div class="container">
-        
-        <!-- HEADER GRID -->
         <div class="stats-grid">
-            
-            <!-- Total Barang -->
             <div class="stat-card">
-                <div class="stat-icon icon-blue"><i class="fas fa-box"></i></div>
+                <div class="stat-icon"><i class="fas fa-box"></i></div>
                 <div class="stat-info">
                     <h3>Total Barang</h3>
                     <p><?= $totalItem ?></p>
                 </div>
             </div>
 
-            <!--Search Bar-->
             <form action="" method="GET" class="search-box-header">
-                <input type="text" name="q" class="search-input-header" placeholder="Cari nama barang..." value="<?= isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '' ?>">
+                <input type="text" name="q" class="search-input-header" placeholder="Cari barang..." value="<?= htmlspecialchars($searchKeyword) ?>">
                 <button type="submit" class="btn btn-search"><i class="fas fa-search"></i></button>
-                <?php if(isset($_GET['q'])): ?>
-                    <a href="index.php" class="btn-reset" title="Reset Pencarian"><i class="fas fa-times"></i></a>
+                <?php if($searchKeyword): ?>
+                    <a href="index.php" class="btn-reset"><i class="fas fa-times"></i></a>
                 <?php endif; ?>
             </form>
-
         </div>
 
         <div class="content-grid">
-            
-            <!-- FORM INPUT -->
             <div class="left-panel">
                 <div class="card">
                     <div class="card-header">
@@ -366,41 +388,39 @@ $totalItem = count($dataBarang);
                             
                             <div class="form-group">
                                 <label class="form-label">Nama Barang</label>
-                                <input type="text" name="nama" class="form-input" value="<?= $editData['nama'] ?>" placeholder="Contoh: Laptop Asus" required>
+                                <input type="text" name="nama" class="form-input" value="<?= $editData['nama'] ?>" required>
                             </div>
 
                             <div class="form-group">
                                 <label class="form-label">Stok</label>
-                                <input type="number" name="stok" class="form-input" value="<?= $editData['stok'] ?>" placeholder="0" required>
+                                <input type="number" name="stok" class="form-input" value="<?= $editData['stok'] ?>" required>
                             </div>
 
                             <div class="form-group">
-                                <label class="form-label">Harga Satuan (Rp)</label>
-                                <input type="number" name="harga" class="form-input" value="<?= $editData['harga'] ?>" placeholder="0" required>
+                                <label class="form-label">Harga (Rp)</label>
+                                <input type="number" name="harga" class="form-input" value="<?= $editData['harga'] ?>" required>
                             </div>
 
                             <button type="submit" class="btn btn-primary">
-                                <?= $editMode ? 'Simpan Perubahan' : 'Tambah Barang' ?>
+                                <?= $editMode ? 'Simpan' : 'Tambah' ?>
                             </button>
 
                             <?php if ($editMode): ?>
-                                <a href="index.php" class="btn btn-secondary">Cancel</a>
+                                <a href="index.php" class="btn btn-secondary">Batal</a>
                             <?php endif; ?>
                         </form>
                     </div>
                 </div>
             </div>
 
-            <!-- TABEL DATA -->
             <div class="right-panel">
                 <div class="card">
                     <div class="card-body">
-                        
                         <div style="overflow-x: auto;">
                             <table>
                                 <thead>
                                     <tr>
-                                        <th>Nama Barang</th>
+                                        <th>Nama</th>
                                         <th>Stok</th>
                                         <th>Harga</th>
                                         <th style="text-align:right;">Aksi</th>
@@ -408,31 +428,22 @@ $totalItem = count($dataBarang);
                                 </thead>
                                 <tbody>
                                     <?php if (empty($dataBarang)): ?>
-                                        <tr>
-                                            <td colspan="4" style="text-align:center; padding: 30px; color: #9CA3AF;">
-                                                <i class="fas fa-box-open" style="font-size: 2rem; margin-bottom: 10px;"></i><br>
-                                                Barang Habis.
-                                            </td>
-                                        </tr>
+                                        <tr><td colspan="4" style="text-align:center; padding: 30px;">Data Kosong.</td></tr>
                                     <?php else: ?>
                                         <?php foreach ($dataBarang as $row): ?>
                                         <tr>
-                                            <td style="font-weight: 600; color: var(--text-dark);">
-                                                <?= $row['nama'] ?>
-                                            </td>
+                                            <td><?= $row['nama'] ?></td>
                                             <td>
                                                 <?php if($row['stok'] < 5): ?>
-                                                    <span class="badge bg-warn"><?= $row['stok'] ?> (Stok Tipis)</span>
+                                                    <span class="badge bg-warn"><?= $row['stok'] ?></span>
                                                 <?php else: ?>
-                                                    <span class="badge bg-ok"><?= $row['stok'] ?> Pcs</span>
+                                                    <span class="badge bg-ok"><?= $row['stok'] ?></span>
                                                 <?php endif; ?>
                                             </td>
-                                            <td>
-                                                Rp <?= number_format($row['harga'], 0, ',', '.') ?>
-                                            </td>
-                                            <td class="action-links" style="text-align:right;">
-                                                <a href="?op=edit&id=<?= $row['id'] ?>" class="edit-link" title="Edit"><i class="fas fa-pen"></i></a>
-                                                <a href="?op=delete&id=<?= $row['id'] ?>" class="delete-link" onclick="return confirm('Hapus barang ini?')" title="Hapus"><i class="fas fa-trash"></i></a>
+                                            <td>Rp <?= number_format($row['harga'], 0, ',', '.') ?></td>
+                                            <td style="text-align:right;" class="action-links">
+                                                <a href="?op=edit&id=<?= $row['id'] ?>" class="edit-link"><i class="fas fa-pen"></i></a>
+                                                <a href="?op=delete&id=<?= $row['id'] ?>" class="delete-link" onclick="return confirm('Hapus?')"><i class="fas fa-trash"></i></a>
                                             </td>
                                         </tr>
                                         <?php endforeach; ?>
@@ -443,9 +454,7 @@ $totalItem = count($dataBarang);
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
-
 </body>
 </html>
