@@ -48,7 +48,7 @@ class StockManager {
     }
 
     public function updateItem($id, $nama, $stok, $harga) {
-        if($stok < 0 || $harga <0){
+        if($stok < 0 || $harga < 0){
             return false;
         }
         foreach ($this->data as &$item) {
@@ -425,15 +425,14 @@ $totalItem = count($dataBarang);
 
         </div>
 
-        <div class="content-grid">
-            
-            <div class="left-panel">
-    
-    <?php if ($errorMessage): ?>
-        <div class="alert-box alert-error">
+    <div class="content-grid"> 
+        <div class="left-panel">
+
+            <?php if ($errorMessage): ?>
+            <div class="alert-box alert-error">
             <?= $errorMessage ?>
-        </div>
-    <?php endif; ?>
+            </div>
+            <?php endif; ?>
     
     <div class="card">
         <div class="card-header">
