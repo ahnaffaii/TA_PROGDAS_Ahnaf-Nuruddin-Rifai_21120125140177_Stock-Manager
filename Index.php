@@ -33,6 +33,9 @@ class StockManager {
     }
 
     public function addItem($nama, $stok, $harga) {
+        if($stok < 0 || $harga < 0) {
+            return false;
+        }
         $newItem = [
             'id' => time(),
             'nama' => $nama,
@@ -41,9 +44,13 @@ class StockManager {
         ];
         $this->data[] = $newItem;
         $this->saveData();
+        return true;
     }
 
     public function updateItem($id, $nama, $stok, $harga) {
+        if($stok < 0 || $harga <0){
+            return false;
+        }
         foreach ($this->data as &$item) {
             if ($item['id'] == $id) {
                 $item['nama'] = $nama;
@@ -53,6 +60,7 @@ class StockManager {
             }
         }
         $this->saveData();
+        return true;
     }
 
     public function deleteItem($id) {
@@ -96,14 +104,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $harga = intval($_POST['harga']);
     $id = $_POST['id'];
 
-    if ($id) {
-        $manager->updateItem($id, $nama, $stok, $harga);
+   if ($stok < 0 || $harga <0 ) {
+        $errorMessage = "⚠️ **Gagal!** Stok atau Harga tidak boleh bernilai negatif.";
+
+        if ($id) {
+            $editMode = true;
+            $editData = ['id' => $id, 'nama' => $nama, 'stok' => $stok, 'harga' => $harga];
+        } else {
+            $editData = ['id' => '', 'nama' => $nama, 'stok' => $stok, 'harga' => $harga];
+        }
     } else {
-        $manager->addItem($nama, $stok, $harga);
+        if ($id) {
+            $manager->updateItem($id, $nama, $stok, $harga);
+        } else {
+            $manager->addItem($nama, $stok, $harga);
+        }
+        
+        header("Location: index.php");
+        exit();
     }
-    
-    header("Location: index.php");
-    exit();
 }
 
 // 2. Handle GET Actions (Delete / Edit / Search)
@@ -172,6 +191,21 @@ $totalItem = count($dataBarang);
             padding-bottom: 50px; 
             overflow-x: hidden; 
             font-size: 16px; 
+        }
+        
+        .alert-box {
+            padding: 15px 25px;
+            margin-bottom: 20px;
+            border-radius: var(--radius);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .alert-error {
+            background-color: #FEE2E2; 
+            color: #991B1B;
+            border: 1px solid #FCA5A5;
         }
 
         /* --- HEADER & NAVBAR --- */
@@ -393,42 +427,48 @@ $totalItem = count($dataBarang);
 
         <div class="content-grid">
             
-            <!-- FORM INPUT -->
             <div class="left-panel">
-                <div class="card">
-                    <div class="card-header">
-                        <?= $editMode ? '<i class="fas fa-edit"></i> Edit Barang' : '<i class="fas fa-plus-circle"></i> Tambah Baru' ?>
-                    </div>
-                    <div class="card-body">
-                        <form action="" method="POST">
-                            <input type="hidden" name="id" value="<?= $editData['id'] ?>">
-                            
-                            <div class="form-group">
-                                <label class="form-label">Nama Barang</label>
-                                <input type="text" name="nama" class="form-input" value="<?= $editData['nama'] ?>" placeholder="Contoh: Laptop Asus" required>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">Stok</label>
-                                <input type="number" name="stok" class="form-input" value="<?= $editData['stok'] ?>" placeholder="0" required>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">Harga Satuan (Rp)</label>
-                                <input type="number" name="harga" class="form-input" value="<?= $editData['harga'] ?>" placeholder="0" required>
-                            </div>
-
-                            <button type="submit" class="btn btn-primary">
-                                <?= $editMode ? 'Simpan Perubahan' : 'Tambah Barang' ?>
-                            </button>
-
-                            <?php if ($editMode): ?>
-                                <a href="index.php" class="btn btn-secondary">Cancel</a>
-                            <?php endif; ?>
-                        </form>
-                    </div>
+    
+    <?php if ($errorMessage): ?>
+        <div class="alert-box alert-error">
+            <?= $errorMessage ?>
+        </div>
+    <?php endif; ?>
+    
+    <div class="card">
+        <div class="card-header">
+            <?= $editMode ? '<i class="fas fa-edit"></i> Edit Barang' : '<i class="fas fa-plus-circle"></i> Tambah Baru' ?>
+        </div>
+        <div class="card-body">
+            <form action="" method="POST">
+                <input type="hidden" name="id" value="<?= $editData['id'] ?>">
+                
+                <div class="form-group">
+                    <label class="form-label">Nama Barang</label>
+                    <input type="text" name="nama" class="form-input" value="<?= $editData['nama'] ?>" placeholder="Contoh: Laptop Asus" required>
                 </div>
-            </div>
+
+                <div class="form-group">
+                    <label class="form-label">Stok</label>
+                    <input type="number" name="stok" class="form-input" value="<?= $editData['stok'] ?>" placeholder="0" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Harga Satuan (Rp)</label>
+                    <input type="number" name="harga" class="form-input" value="<?= $editData['harga'] ?>" placeholder="0" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <?= $editMode ? 'Simpan Perubahan' : 'Tambah Barang' ?>
+                </button>
+
+                <?php if ($editMode): ?>
+                    <a href="index.php" class="btn btn-secondary">Cancel</a>
+                <?php endif; ?>
+            </form>
+        </div>
+    </div>
+</div>
 
             <!-- TABEL DATA -->
             <div class="right-panel">
