@@ -105,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id = $_POST['id'];
 
    if ($stok < 0 || $harga <0 ) {
-        $errorMessage = "⚠️ **Gagal!** Stok atau Harga tidak boleh bernilai negatif.";
+        $errorMessage = "⚠️ *Gagal!* Stok atau Harga tidak boleh bernilai negatif.";
 
         if ($id) {
             $editMode = true;
